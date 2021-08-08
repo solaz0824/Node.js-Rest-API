@@ -9,9 +9,6 @@ const seedMoviesData = async () => {
 };
 
 const seedUsersData = async () => {
-  // const users = [...seedUsers()].map((user) => ({
-  //   ...user,
-  // }));
   const users = await seedUsers();
   await db.User.deleteMany({});
   await db.User.create([...users]);

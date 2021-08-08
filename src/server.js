@@ -17,13 +17,11 @@ app.use(morgan("dev"));
 app.use(helmet());
 app.use(json());
 
-// Routers here!
 app.use("/movies", movieRouter);
 app.use("/users", userRouter);
 app.use("/persons", personRouter);
 app.use("/account", accountRouter);
 
-//root
 app.get("/", (req, res) => {
   res.status(200).send({
     data: "I am Root!!",
