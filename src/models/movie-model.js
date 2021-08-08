@@ -13,7 +13,7 @@ const MovieSchema = Schema(
       required: true,
     },
     genres: {
-      type: String,
+      type: [String],
       required: true,
       trim: true,
     },
@@ -23,15 +23,18 @@ const MovieSchema = Schema(
     },
     cast: [
       {
-        name: { type: String, trim: true },
-        lastName: { type: String, trim: true },
+        type: mongoose.SchemaTypes.ObjectId,
+        required: true,
+        index: true,
+        ref: "person",
       },
     ],
     crew: [
       {
-        name: { type: String, trim: true },
-        lastName: { type: String, trim: true },
-        position: { type: String, trim: true },
+        type: mongoose.SchemaTypes.ObjectId,
+        required: true,
+        index: true,
+        ref: "person",
       },
     ],
   },

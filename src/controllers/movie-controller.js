@@ -170,8 +170,6 @@ const deleteCredits = async (req, res, next) => {
   }
 };
 
-//update credits???????
-
 module.exports = {
   createMovie,
   getMovies,
