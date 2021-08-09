@@ -1,5 +1,6 @@
 const db = require("../models");
 
+// ? cast and crew should be _id of person data.
 const createMovie = async (req, res, next) => {
   const { title, releaseYear, genres, duration, cast, crew } = req.body;
   try {
@@ -27,7 +28,7 @@ const createMovie = async (req, res, next) => {
 };
 const getMovies = async (req, res, next) => {
   try {
-    const movies = await db.Movie.find().lean();
+    const movies = await db.Movie.find().populate(["cast", "crew"]).lean();
     res.status(200).send({
       data: movies,
     });
@@ -39,7 +40,9 @@ const getMovies = async (req, res, next) => {
 const getMovieById = async (req, res, next) => {
   const { id: movieId } = req.params;
   try {
-    const movie = await db.Movie.find({ _id: movieId }).lean();
+    const movie = await db.Movie.findOne({ _id: movieId })
+      .populate(["cast", "crew"])
+      .lean();
     res.status(200).send({
       data: movie,
     });
@@ -97,14 +100,12 @@ const deleteMovie = async (req, res, next) => {
   }
 };
 
-/* {
-        "cast": {"castName": "name", "castLastName": "lastName"},
-        "crew": {"name": "name", "lastName": "lastName", "position": "position"}
-} */
+// ?  Postman body enter this
+// * { "cast": { "_id": "person id" }, "crew":{"_id": "person id"}}
 const createCredits = async (req, res, next) => {
   const {
-    cast: { castName, castLastName },
-    crew: { name, lastName, position },
+    cast: { _id: castId },
+    crew: { _id: crewId },
   } = req.body;
   const { id: movieId } = req.params;
 
@@ -115,12 +116,12 @@ const createCredits = async (req, res, next) => {
       },
       {
         $push: {
-          cast: { name: castName, lastName: castLastName },
-          crew: { name, lastName, position },
+          cast: { _id: castId },
+          crew: { _id: crewId },
         },
       },
       { new: true, upsert: true, setDefaultsOnInsert: true },
-    );
+    ).populate(["cast", "crew"]);
     res.status(200).send({
       data: {
         cast: movie.cast,
@@ -135,10 +136,12 @@ const createCredits = async (req, res, next) => {
 const getCredits = async (req, res, next) => {
   const { id: movieId } = req.params;
   try {
-    const credits = await db.Movie.find({ _id: movieId }).select({
-      cast: 1,
-      crew: 1,
-    });
+    const credits = await db.Movie.find({ _id: movieId })
+      .select({
+        cast: 1,
+        crew: 1,
+      })
+      .populate(["cast", "crew"]);
     res.status(200).send({
       data: credits,
     });
